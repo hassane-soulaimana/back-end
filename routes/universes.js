@@ -7,7 +7,6 @@ import {
   updateUniverse,
   deleteUniverse,
 } from "../controllers/universeController.js";
-// ADDED
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

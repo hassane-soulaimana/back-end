@@ -13,19 +13,19 @@ const router = express.Router();
 // Toutes les routes sont protégées (utilisateur connecté)
 router.use(protect);
 
-// GET /api/favorites - Récupérer mes favoris
+// Récupérer mes favoris
 router.get("/", getMyFavorites);
 
-// POST /api/favorites/:productId - Ajouter un favori
+// Ajouter un favori
 router.post("/:productId", addFavorite);
 
-// DELETE /api/favorites/:productId - Supprimer un favori
+// Supprimer un favori
 router.delete("/:productId", removeFavorite);
 
-// GET /api/favorites/check/:productId - Vérifier si un produit est en favori
+// Vérifier si un produit est en favori
 router.get("/check/:productId", checkFavorite);
 
-// PUT /api/favorites/toggle/:productId - Toggle favori
+// Toggle favori
 router.put("/toggle/:productId", toggleFavorite);
 
 export default router;

@@ -17,7 +17,7 @@ router.get("/", getAllCategories);
 router.get("/:id", getCategoryById);
 router.get("/:id/products", getProductsByCategory);
 
-// Routes admin (protégées)
+// Routes admin
 router.post("/", protect, authorize("admin"), createCategory);
 router.put("/:id", protect, authorize("admin"), updateCategory);
 router.delete("/:id", protect, authorize("admin"), deleteCategory);

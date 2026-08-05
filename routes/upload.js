@@ -4,7 +4,7 @@ import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// POST /api/upload - Upload une image (admin seulement)
+// Upload une image (admin seulement)
 router.post("/", protect, authorize("admin"), upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ success: false, message: "Aucune image envoyée" });
