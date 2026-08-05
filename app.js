@@ -14,24 +14,16 @@ import favoritesRoutes from "./routes/favorites.js";
 import uploadRoutes from "./routes/upload.js";
 import cartRoutes from "./routes/cart.js";
 import ordersRoutes from "./routes/orders.js";
+import usersRoutes from "./routes/users.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// ✅ CORS global
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://apianime.alwaysdata.net',
-    'https://hassane-soulaimana.students-laplateforme.io'
-  ],
-  credentials: true
-}));
 
-// ✅ Servir les images avec headers CORS
+app.use(cors());
+
 app.use("/images", express.static(path.join(__dirname, "public/images"), {
   setHeaders: (res) => {
     res.set('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -60,7 +52,7 @@ app.use("/api/favorites", favoritesRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", ordersRoutes);
-import usersRoutes from "./routes/users.js";
+
 app.use("/api/users", usersRoutes);
 
 // 404
