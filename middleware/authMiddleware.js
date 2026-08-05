@@ -7,9 +7,7 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined.");
 }
 
-/**
- * Middleware de protection des routes
- */
+// Middleware de protection des routes
 export const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -59,10 +57,7 @@ export const protect = async (req, res, next) => {
   }
 };
 
-/**
- * Middleware d'autorisation par rôle
- * Exemple : authorize("admin")
- */
+// Middleware d'autorisation par rôle
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
