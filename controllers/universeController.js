@@ -1,9 +1,7 @@
 import Universe from "../models/Universe.js";
 import Product from "../models/Product.js";
 
-// @desc    Récupérer tous les univers
-// @route   GET /api/universes
-// @access  Public
+//Récupérer tous les univers
 export const getAllUniverses = async (req, res, next) => {
   try {
     const universes = await Universe.find().sort({ name: 1 });
@@ -18,9 +16,7 @@ export const getAllUniverses = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer un univers par ID
-// @route   GET /api/universes/:id
-// @access  Public
+//Récupérer un univers par ID
 export const getUniverseById = async (req, res, next) => {
   try {
     const universe = await Universe.findById(req.params.id);
@@ -41,9 +37,7 @@ export const getUniverseById = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer les produits d'un univers
-// @route   GET /api/universes/:id/products
-// @access  Public
+// Récupérer les produits d'un univers
 export const getProductsByUniverse = async (req, res, next) => {
   try {
     const products = await Product.find({ universe: req.params.id }).populate(
@@ -62,9 +56,7 @@ export const getProductsByUniverse = async (req, res, next) => {
   }
 };
 
-// @desc    Créer un nouvel univers
-// @route   POST /api/universes
-// @access  Private
+// Créer un nouvel univers
 export const createUniverse = async (req, res, next) => {
   try {
     const universe = await Universe.create(req.body);
@@ -79,9 +71,7 @@ export const createUniverse = async (req, res, next) => {
   }
 };
 
-// @desc    Mettre à jour un univers
-// @route   PUT /api/universes/:id
-// @access  Private
+//Mettre à jour un univers
 export const updateUniverse = async (req, res, next) => {
   try {
     const universe = await Universe.findByIdAndUpdate(req.params.id, req.body, {
@@ -106,9 +96,7 @@ export const updateUniverse = async (req, res, next) => {
   }
 };
 
-// @desc    Supprimer un univers
-// @route   DELETE /api/universes/:id
-// @access  Private
+//Supprimer un univers
 export const deleteUniverse = async (req, res, next) => {
   try {
     const universe = await Universe.findByIdAndDelete(req.params.id);
