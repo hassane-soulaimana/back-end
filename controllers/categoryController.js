@@ -1,9 +1,10 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 
-// @desc    Récupérer toutes les catégories
-// @route   GET /api/categories
-// @access  Public
+const categoryNotFound = (res) =>
+  res.status(404).json({ success: false, message: "Catégorie non trouvée" });
+
+// Récupérer toutes les catégories
 export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.find().sort({ name: 1 });
@@ -18,19 +19,12 @@ export const getAllCategories = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer une catégorie par ID
-// @route   GET /api/categories/:id
-// @access  Public
+// Récupérer une catégorie par ID
 export const getCategoryById = async (req, res, next) => {
   try {
     const category = await Category.findById(req.params.id);
 
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Catégorie non trouvée",
-      });
-    }
+    if (!category) return categoryNotFound(res);
 
     res.status(200).json({
       success: true,
@@ -41,15 +35,12 @@ export const getCategoryById = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer les produits d'une catégorie
-// @route   GET /api/categories/:id/products
-// @access  Public
+//  Récupérer les produits d'une catégorie
 export const getProductsByCategory = async (req, res, next) => {
   try {
-    const products = await Product.find({ category: req.params.id }).populate(
-      "universe",
-      "name"
-    );
+    const products = await Product.find({
+      category: req.params.id,
+    }).populate("universe", "name");
 
     res.status(200).json({
       success: true,
@@ -62,9 +53,7 @@ export const getProductsByCategory = async (req, res, next) => {
   }
 };
 
-// @desc    Créer une nouvelle catégorie
-// @route   POST /api/categories
-// @access  Private
+// Créer une nouvelle catégorie
 export const createCategory = async (req, res, next) => {
   try {
     const category = await Category.create(req.body);
@@ -79,9 +68,7 @@ export const createCategory = async (req, res, next) => {
   }
 };
 
-// @desc    Mettre à jour une catégorie
-// @route   PUT /api/categories/:id
-// @access  Private
+//  Mettre à jour une catégorie
 export const updateCategory = async (req, res, next) => {
   try {
     const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
@@ -89,12 +76,7 @@ export const updateCategory = async (req, res, next) => {
       runValidators: true,
     });
 
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Catégorie non trouvée",
-      });
-    }
+    if (!category) return categoryNotFound(res);
 
     res.status(200).json({
       success: true,
@@ -106,19 +88,12 @@ export const updateCategory = async (req, res, next) => {
   }
 };
 
-// @desc    Supprimer une catégorie
-// @route   DELETE /api/categories/:id
-// @access  Private
+// Supprimer une catégorie
 export const deleteCategory = async (req, res, next) => {
   try {
     const category = await Category.findByIdAndDelete(req.params.id);
 
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Catégorie non trouvée",
-      });
-    }
+    if (!category) return categoryNotFound(res);
 
     res.status(200).json({
       success: true,

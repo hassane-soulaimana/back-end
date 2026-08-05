@@ -1,8 +1,9 @@
 import Product from "../models/Product.js";
 
-// @desc    Récupérer tous les produits
-// @route   GET /api/products
-// @access  Public
+const productNotFound = (res) =>
+  res.status(404).json({ success: false, message: "Produit non trouvé" });
+
+//Récupérer tous les produits
 export const getAllProducts = async (req, res, next) => {
   try {
     const { universe, category, featured, search, sort, limit } = req.query;
@@ -47,21 +48,14 @@ export const getAllProducts = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer un produit par ID
-// @route   GET /api/products/:id
-// @access  Public
+//  Récupérer un produit par ID
 export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate("universe")
       .populate("category");
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Produit non trouvé",
-      });
-    }
+    if (!product) return productNotFound(res);
 
     res.status(200).json({
       success: true,
@@ -72,9 +66,7 @@ export const getProductById = async (req, res, next) => {
   }
 };
 
-// @desc    Créer un nouveau produit
-// @route   POST /api/products
-// @access  Private (pour l'instant public pour les tests)
+// Créer un nouveau produit
 export const createProduct = async (req, res, next) => {
   try {
     const { name, price, description, category, universe, image } = req.body;
@@ -110,9 +102,7 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Mettre à jour un produit
-// @route   PUT /api/products/:id
-// @access  Private
+//Mettre à jour un produit
 export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -120,12 +110,7 @@ export const updateProduct = async (req, res, next) => {
       runValidators: true, // Exécute les validations du schéma
     });
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Produit non trouvé",
-      });
-    }
+    if (!product) return productNotFound(res);
 
     res.status(200).json({
       success: true,
@@ -137,19 +122,12 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Supprimer un produit
-// @route   DELETE /api/products/:id
-// @access  Private
+//  Supprimer un produit
 export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Produit non trouvé",
-      });
-    }
+    if (!product) return productNotFound(res);
 
     res.status(200).json({
       success: true,
@@ -160,9 +138,7 @@ export const deleteProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Récupérer les produits en vedette
-// @route   GET /api/products/featured
-// @access  Public
+//Récupérer les produits en vedette
 export const getFeaturedProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ featured: true })
