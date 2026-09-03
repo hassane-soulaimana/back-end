@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7f1d1d"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.5">
+      <stop offset="0" stop-color="#fca5a5" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#fca5a5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect x="400" y="0" width="400" height="800" fill="#ffffff" fill-opacity="0.03"/>
+  <circle cx="400" cy="360" r="300" fill="url(#glow)"/>
+
+  
+  <g fill="#ffffff" fill-opacity="0.14">
+    <rect x="278" y="520" width="244" height="46" rx="8"/>
+    <rect x="300" y="500" width="200" height="28" rx="6"/>
+    <path d="M322 500 L332 352 L468 352 L478 500 Z"/>
+    <rect x="312" y="316" width="176" height="44" rx="5"/>
+    <rect x="312" y="286" width="30" height="34"/>
+    <rect x="360" y="286" width="34" height="34"/>
+    <rect x="406" y="286" width="34" height="34"/>
+    <rect x="458" y="286" width="30" height="34"/>
+  </g>
+
+  <rect x="28" y="28" width="744" height="744" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+
+  <text x="52" y="70" fill="#ffffff" fill-opacity="0.75"
+        font-family="Georgia, 'Times New Roman', serif" font-size="20" letter-spacing="6">ÉCHECS MANGAS</text>
+
+  <text x="400" y="648" text-anchor="middle" fill="#ffffff"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="40"><tspan x="400" dy="0">Pièces Villains</tspan><tspan x="400" dy="46">Collection</tspan></text>
+
+  <text x="400" y="726" text-anchor="middle" fill="#fca5a5" fill-opacity="0.9"
+        font-family="Georgia, 'Times New Roman', serif" font-size="18" letter-spacing="4">VISUEL PROVISOIRE</text>
+</svg>
