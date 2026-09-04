@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import Cart from "../models/Cart.js";
+import Favorite from "../models/Favorite.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -52,7 +54,8 @@ export const register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Inscription réussie",
-      data: { user, token },
+      token,
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -121,7 +124,8 @@ export const login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Connexion réussie",
-      data: { user, token },
+      token,
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -273,6 +277,12 @@ export const deleteUser = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
     }
+
+    // Nettoyer les données liées (on garde les commandes pour l'historique/les stats)
+    await Promise.all([
+      Cart.deleteOne({ user: id }),
+      Favorite.deleteMany({ user: id }),
+    ]);
 
     res.status(200).json({ success: true, message: "Utilisateur supprimé" });
   } catch (error) {

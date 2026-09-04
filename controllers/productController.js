@@ -3,6 +3,9 @@ import Product from "../models/Product.js";
 const productNotFound = (res) =>
   res.status(404).json({ success: false, message: "Produit non trouvé" });
 
+// Neutralise les caractères spéciaux pour utiliser une saisie utilisateur
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 //Récupérer tous les produits
 export const getAllProducts = async (req, res, next) => {
   try {
@@ -15,9 +18,10 @@ export const getAllProducts = async (req, res, next) => {
     if (category) query.category = category;
     if (featured) query.featured = featured === "true";
     if (search) {
+      const safeSearch = escapeRegex(search);
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
+        { name: { $regex: safeSearch, $options: "i" } },
+        { description: { $regex: safeSearch, $options: "i" } },
       ];
     }
 

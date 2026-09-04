@@ -50,10 +50,7 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    return res.status(500).json({
-      success: false,
-      message: "Erreur serveur.",
-    });
+    return next(error);
   }
 };
 

@@ -21,9 +21,14 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Sécurité des en-têtes HTTP (en premier)
+app.use(helmet());
 
+// CORS ouvert : l'API est publique et l'authentification se fait par token Bearer
+// (pas de cookie), donc pas de risque CSRF via le navigateur.
 app.use(cors());
 
+// Images produits : contenu public, accessible depuis n'importe quel site
 app.use("/images", express.static(path.join(__dirname, "public/images"), {
   setHeaders: (res) => {
     res.set('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -31,7 +36,6 @@ app.use("/images", express.static(path.join(__dirname, "public/images"), {
   }
 }));
 
-app.use(helmet());
 app.use(express.json({ limit: "10kb" }));
 if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
 

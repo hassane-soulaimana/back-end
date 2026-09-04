@@ -3,9 +3,21 @@ import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 
 // Utilisateur
-//  Créer une commande
 
+// Remet en stock ce qui a déjà été décrémenté (appelé quand une commande échoue en cours de route)
+const restoreStock = async (items) => {
+  for (const item of items) {
+    await Product.findByIdAndUpdate(item.product, {
+      $inc: { stock: item.quantity },
+    });
+  }
+};
+
+//  Créer une commande
 export const createOrder = async (req, res, next) => {
+  // On garde la trace de ce qu'on a retiré du stock pour pouvoir l'annuler si besoin
+  const decremented = [];
+
   try {
     const { shippingAddress, paymentMethod, shippingCost = 0 } = req.body;
 
@@ -27,23 +39,40 @@ export const createOrder = async (req, res, next) => {
       });
     }
 
-    // Vérifier le stock et préparer les items
-    const orderItems = [];
-    for (const item of cart.items) {
-      const product = item.product;
+    // Ignorer les produits supprimés entre-temps
+    const items = cart.items.filter((item) => item.product);
+    if (items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Votre panier est vide",
+      });
+    }
 
-      if (product.stock < item.quantity) {
+    // Décrémenter le stock de façon atomique : la condition stock >= quantité
+    // évite qu'une commande passe si deux clients achètent le dernier article en même temps
+    const orderItems = [];
+    for (const item of items) {
+      const product = await Product.findOneAndUpdate(
+        { _id: item.product._id, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+      );
+
+      if (!product) {
+        // Stock insuffisant -> on remet ce qui a déjà été retiré et on arrête
+        await restoreStock(decremented);
         return res.status(400).json({
           success: false,
-          message: `Stock insuffisant pour ${product.name}`,
+          message: `Stock insuffisant pour ${item.product.name}`,
         });
       }
 
+      decremented.push({ product: item.product._id, quantity: item.quantity });
       orderItems.push({
-        product: product._id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
+        product: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        image: item.product.image,
         quantity: item.quantity,
       });
     }
@@ -53,23 +82,23 @@ export const createOrder = async (req, res, next) => {
     const total = subtotal + shippingCost;
 
     // Créer la commande
-    const order = await Order.create({
-      user: req.user._id,
-      items: orderItems,
-      shippingAddress,
-      paymentMethod,
-      subtotal,
-      shippingCost,
-      total,
-      status: "confirmed",
-      paymentStatus: "paid", // Simulé pour l'instant
-    });
-
-    // Décrémenter le stock (une fois la commande créée avec succès)
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity },
+    let order;
+    try {
+      order = await Order.create({
+        user: req.user._id,
+        items: orderItems,
+        shippingAddress,
+        paymentMethod,
+        subtotal,
+        shippingCost,
+        total,
+        status: "confirmed",
+        paymentStatus: "paid", // Simulé pour l'instant
       });
+    } catch (err) {
+      // La commande n'a pas pu être créée -> on rend le stock retiré
+      await restoreStock(decremented);
+      throw err;
     }
 
     // Vider le panier

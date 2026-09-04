@@ -29,8 +29,14 @@ async function startServer() {
 
 startServer();
 
-process.on("SIGINT", async () => {
+// Arrêt propre : SIGINT = Ctrl+C en local, SIGTERM = redémarrage par l'hébergeur (AlwaysData/Plesk/PM2)
+const shutdown = async (signal) => {
+  console.log(` ${signal} reçu, fermeture...`);
+  server.close();
   await mongoose.disconnect();
   console.log(" MongoDB déconnecté");
   process.exit(0);
-});
+};
+
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
